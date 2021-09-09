@@ -12,6 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
+
 """
 In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
@@ -23,7 +24,6 @@ class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
     any of the methods (in object-oriented terminology: an abstract class).
-
     You do not need to change anything in this class, ever.
     """
 
@@ -36,7 +36,6 @@ class SearchProblem:
     def isGoalState(self, state):
         """
           state: Search state
-
         Returns True if and only if the state is a valid goal state.
         """
         util.raiseNotDefined()
@@ -44,7 +43,6 @@ class SearchProblem:
     def getSuccessors(self, state):
         """
           state: Search state
-
         For a given state, this should return a list of triples, (successor,
         action, stepCost), where 'successor' is a successor to the current
         state, 'action' is the action required to get there, and 'stepCost' is
@@ -55,12 +53,10 @@ class SearchProblem:
     def getCostOfActions(self, actions):
         """
          actions: A list of actions to take
-
         This method returns the total cost of a particular sequence of actions.
         The sequence must be composed of legal moves.
         """
         util.raiseNotDefined()
-
 
 def tinyMazeSearch(problem):
     """
@@ -72,32 +68,52 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+def traverse(fringe, problem):
+    def find_path(v):
+        path = []
+        for item in v:
+            path.append(item[1])
+        return path
+    fringe.push([(problem.getStartState(), None, 0)])
+    visited = set()
+    while not fringe.isEmpty():
+        v = fringe.pop()
+        if problem.isGoalState(v[-1][0]):
+            return find_path(v[1:])
+        if v[-1][0] not in visited:
+            visited.add(v[-1][0])
+            suc = problem.getSuccessors(v[-1][0])
+            for child in suc:
+                fringe.push(v + [(child[0], child[1], child[2] + v[-1][2])])
+
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
-
     Your search algorithm needs to return a list of actions that reaches the
     goal. Make sure to implement a graph search algorithm.
-
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
-
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.Stack()
+    return traverse(fringe, problem)
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.Queue()
+    return traverse(fringe, problem)
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def func(item):
+        return item[-1][2]
+    fringe = util.PriorityQueueWithFunction(func)
+    return traverse(fringe, problem)
 
 def nullHeuristic(state, problem=None):
     """
@@ -109,8 +125,11 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
+    # util.raiseNotDefined()
+    def func(item):
+        return item[-1][2] + heuristic(item[-1][0], problem)
+    fringe = util.PriorityQueueWithFunction(func)
+    return traverse(fringe, problem)
 
 # Abbreviations
 bfs = breadthFirstSearch
