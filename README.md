@@ -1,6 +1,7 @@
 The search.py and searchAgents.py files contain AI search algorithims that are able to successfully play and solve any pacman map as well as any game.
 
 Algorithms implemented: 
+                         
                          -Depth First search
                          
                          -Breadth First search
